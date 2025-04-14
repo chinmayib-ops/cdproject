@@ -4,6 +4,8 @@
 #include <string.h>
 void yyerror(const char *s);
 extern int yylex();
+// Declare yyin so that we can assign to it in main.
+extern FILE *yyin;
 %}
 
 %union {
@@ -42,8 +44,18 @@ void yyerror(const char *s) {
     fprintf(stderr, "Error: %s\n", s);
 }
 
-int main() {
-    printf("Enter your program:\n");
+int main(int argc, char *argv[]) {
+    if (argc > 1) {
+        FILE *file = fopen(argv[1], "r");
+        if (!file) {
+            perror(argv[1]);
+            exit(EXIT_FAILURE);
+        }
+        yyin = file;
+    } else {
+        // Optionally, prompt for input if no file is provided.
+        printf("No input file specified. Reading from standard input...\n");
+    }
     yyparse();
     return 0;
 }

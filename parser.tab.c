@@ -74,8 +74,10 @@
 #include <string.h>
 void yyerror(const char *s);
 extern int yylex();
+// Declare yyin so that we can assign to it in main.
+extern FILE *yyin;
 
-#line 79 "parser.tab.c"
+#line 81 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -505,8 +507,8 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    19,    19,    21,    22,    24,    25,    27,    32,    33,
-      34,    36,    37
+       0,    21,    21,    23,    24,    26,    27,    29,    34,    35,
+      36,    38,    39
 };
 #endif
 
@@ -1071,15 +1073,15 @@ yyreduce:
   switch (yyn)
     {
   case 7: /* Declaration: VAR IDENTIFIER ASSIGN Expression  */
-#line 28 "parser.y"
+#line 30 "parser.y"
            {
                printf("Valid Declaration: %s\n", (yyvsp[-2].str));
            }
-#line 1079 "parser.tab.c"
+#line 1081 "parser.tab.c"
     break;
 
 
-#line 1083 "parser.tab.c"
+#line 1085 "parser.tab.c"
 
       default: break;
     }
@@ -1272,15 +1274,25 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 39 "parser.y"
+#line 41 "parser.y"
 
 
 void yyerror(const char *s) {
     fprintf(stderr, "Error: %s\n", s);
 }
 
-int main() {
-    printf("Enter your program:\n");
+int main(int argc, char *argv[]) {
+    if (argc > 1) {
+        FILE *file = fopen(argv[1], "r");
+        if (!file) {
+            perror(argv[1]);
+            exit(EXIT_FAILURE);
+        }
+        yyin = file;
+    } else {
+        // Optionally, prompt for input if no file is provided.
+        printf("No input file specified. Reading from standard input...\n");
+    }
     yyparse();
     return 0;
 }
